@@ -1,4 +1,4 @@
-name: docs-and-cpu
+name: docs-cpu-cuda-compile
 on:
   push:
   pull_request:
@@ -13,10 +13,21 @@ jobs:
       - uses: actions/checkout@v4
       - name: Check documentation
         run: python3 scripts/check_docs.py
-      - name: Configure CPU-only build
-        run: cmake -S . -B build-cpu -DCMAKE_BUILD_TYPE=Release
       - name: Build CPU reference
-        run: cmake --build build-cpu --parallel 2
+        run: make -j 2 cpu
       - name: Test CPU reference
-        run: ctest --test-dir build-cpu --output-on-failure
-      # This job does not compile CUDA or exercise a GPU. Record Sol validation separately.
+        run: make test-cpu
+
+  cuda-compile:
+    # Compiles every CUDA target, your src/ code and the reference solutions, without a GPU.
+    # It cannot run kernels: record GPU test and sanitizer results from Sol separately.
+    runs-on: ubuntu-latest
+    container: nvidia/cuda:12.4.1-devel-ubuntu22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install make and a host compiler
+        run: apt-get update && apt-get install -y --no-install-recommends make g++
+      - name: Compile starter code
+        run: make -j 2 cuda
+      - name: Compile reference solutions
+        run: make -j 2 SOLUTION=1 cuda

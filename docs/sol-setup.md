@@ -28,19 +28,16 @@ These options follow ASU's [GPU resource requests](https://docs.rc.asu.edu/reque
 
 ```bash
 module spider cuda
-module spider cmake
 ```
 
-Select exact installed module names; `CUDA_MODULE_NAME` and `CMAKE_MODULE_NAME` below are placeholders. Inspect `module spider CUDA_MODULE_NAME` for required compiler modules, then load those prerequisites first.
+Select the exact installed module name; `CUDA_MODULE_NAME` below is a placeholder. Inspect `module spider CUDA_MODULE_NAME` for required compiler modules, then load those prerequisites first. The build uses GNU make, which is part of the standard Linux toolchain, so no build-system module is needed.
 
 ```bash
 module load CUDA_MODULE_NAME
-# Only if cmake is not already available:
-module load CMAKE_MODULE_NAME
 module list
 nvcc --version
-cmake --version
 g++ --version
+make --version
 ```
 
 Use ASU's provided CUDA installation. You do not need to install a driver or CUDA Toolkit on your laptop to execute this course on Sol. If installing any local tools later, use D:\ in accordance with your workstation policy.
@@ -61,17 +58,18 @@ That URL is a proposed destination, not a claim that the repository already exis
 ## 5. Build and validate
 
 ```bash
-cmake -S . -B build-gpu -DCMAKE_BUILD_TYPE=Release \
-  -DENABLE_CUDA=ON -DCMAKE_CUDA_ARCHITECTURES=80
-cmake --build build-gpu --parallel 4
-ctest --test-dir build-gpu --output-on-failure
-./build-gpu/calibrate_cuda 1000003
-compute-sanitizer --tool memcheck ./build-gpu/calibrate_cuda 1000003
+make -j 4 lab01
+make test-lab01
+./build/calibrate_cuda 1000003
+make sanitize-lab01
+make SOLUTION=1 -j 4 && make SOLUTION=1 test-gpu   # optional: every lab against the reference solutions
 ```
 
-NVIDIA lists A100 as compute capability 8.0, hence CMake value `80`. [GPU capability table](https://developer.nvidia.com/cuda/gpus). If you request another GPU, verify its value and use a separate build directory.
+NVIDIA lists A100 as compute capability 8.0, hence the default `CUDA_ARCH=80` ([GPU capability table](https://developer.nvidia.com/cuda/gpus)). If you request another GPU, verify its value and pass it, for example `make CUDA_ARCH=90`, or use a separate directory with `BUILD=build-sm90`. A changed flag rebuilds the affected objects automatically. `make help` lists every target.
 
-Expected behavior: successful exit, CSV header and one result row, and `correct=true`. Timing values depend on the allocation. Do not compare them with imaginary target numbers. For the exact timing boundaries, read [Lab 01](../tutorials/01-first-gpu.md).
+Expected behavior: successful exit, CSV header and one result row, and `correct=true`. Every test line starts with `PASS`. Timing values depend on the allocation. Do not compare them with imaginary target numbers. For the exact timing boundaries, read [Lab 01](../tutorials/01-first-gpu.md).
+
+The Labs 02–12 tests fail until you implement their kernels. That is how the starter code is meant to behave. The `SOLUTION=1` run tells you whether the toolkit, harness, and GPU work before you start. The tests need only `python3` with its standard library. The real-data converters for Labs 04 and 07 additionally need NumPy/SciPy and Pillow, which a Python module on Sol can provide.
 
 ## 6. Submit a batch job
 
@@ -79,12 +77,13 @@ Set the exact installed module name and any prerequisite modules in your shell. 
 
 ```bash
 export CUDA_MODULE='REPLACE_WITH_INSTALLED_CUDA_MODULE'
-export CMAKE_MODULE='REPLACE_WITH_INSTALLED_CMAKE_MODULE'
 sbatch --export=ALL slurm/lab01.sbatch
+sbatch --export=ALL,LAB=03 slurm/lab.sbatch               # any lab 01-06: build, test, sanitize, benchmark
+sbatch --export=ALL,LAB=03,SOLUTION=1 slurm/lab.sbatch    # the same against the reference solution
 squeue -u "$USER"
 ```
 
-Omit `CMAKE_MODULE` when CMake is already available. Submit from the repository root. The job writes logs and measurements into an ignored `runs/` subdirectory. The script prints their location. After inspection, copy selected measurements and a manifest into `results/` for publication.
+Submit from the repository root. Each job writes logs and measurements into an ignored `runs/` subdirectory and prints its location. After inspection, copy selected measurements and a manifest into `results/` for publication.
 
 Run `exit` to release an interactive allocation when finished.
 
@@ -94,7 +93,8 @@ Run `exit` to release an interactive allocation when finished.
 | --- | --- |
 | `nvcc` not found | CUDA module and its compiler prerequisites |
 | `nvidia-smi` fails | Whether the GPU allocation has actually begun |
-| CMake cannot find a compatible host compiler | Match the host compiler to the selected CUDA module |
+| `nvcc` rejects the host compiler version | Load the compiler module that `module spider CUDA_MODULE_NAME` lists, or pass `NVCC="nvcc -ccbin <g++ path>"` |
+| `make` reports `missing separator` | A Makefile recipe line lost its leading tab; restore it (editors that expand tabs cause this) |
 | Invalid partition/GPU request | Current ASU resource documentation and your account restrictions |
 | Job remains pending | `squeue`; inspect the scheduler's reason rather than repeatedly submitting |
 | Nsight Compute reports `ERR_NVGPUCTRPERM` | Ask ASU RC about permitted profiling; continue timing without restricted counters |

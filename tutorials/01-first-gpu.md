@@ -13,11 +13,12 @@ Before running our reference, inspect [the kernel](../src/lab01/calibrate_cuda.c
 Use the commands in the [repository README](../README.md). CPU and GPU programs accept an optional positive sample count and optional raw-timing output filename. Run:
 
 ```bash
-./build-gpu/calibrate_cpu 257
-./build-gpu/calibrate_cuda 257
-./build-gpu/calibrate_cuda 1000003
-ctest --test-dir build-gpu --output-on-failure
-compute-sanitizer --tool memcheck ./build-gpu/calibrate_cuda 1000003
+make lab01
+./build/calibrate_cpu 257
+./build/calibrate_cuda 257
+./build/calibrate_cuda 1000003
+make test-lab01
+make sanitize-lab01
 ```
 
 The programs print CSV, including numerical error and `correct`. No example timing values are supplied because timings must come from your hardware.
@@ -26,8 +27,8 @@ Preserve individual repetitions as well as the summary (choose fresh filenames t
 
 ```bash
 mkdir -p runs
-./build-gpu/calibrate_cpu 1000003 runs/cpu-raw.csv > runs/cpu-summary.csv
-./build-gpu/calibrate_cuda 1000003 runs/cuda-raw.csv > runs/cuda-summary.csv
+./build/calibrate_cpu 1000003 runs/cpu-raw.csv > runs/cpu-summary.csv
+./build/calibrate_cuda 1000003 runs/cuda-raw.csv > runs/cuda-summary.csv
 ```
 
 ## Understand the reference

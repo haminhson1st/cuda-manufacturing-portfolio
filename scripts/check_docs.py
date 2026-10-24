@@ -15,7 +15,7 @@ def main():
             continue
         if not path.is_file():
             continue
-        if path.suffix in {".sh", ".sbatch", ".py", ".md", ".cu", ".cpp", ".hpp", ".yml"}:
+        if path.suffix in {".sh", ".sbatch", ".py", ".md", ".cu", ".cuh", ".cpp", ".hpp", ".yml", ".conf"} or path.name == "Makefile":
             raw = path.read_bytes()
             if b"\r" in raw:
                 errors.append(f"{relative}: expected LF line endings")

@@ -1,6 +1,6 @@
 # Project 1 — Sensor-window screening
 
-**Status:** planned; implementation exercises are Labs 02–04.
+**Status:** planned; implementation exercises are Labs 02–04 (starter code and harnesses supplied, kernels not yet implemented by the owner).
 
 ## Problem
 

@@ -17,7 +17,16 @@ Use 6–8 hours per week: roughly one hour of reading, four hours of implementat
 | 11 | [Build the capstone](11-capstone.md) | Reproducible command-line application |
 | 12 | [Publish engineering evidence](12-portfolio-release.md) | Case study, demonstration, release |
 
-Only Lab 01 currently includes implementation code. Later lessons describe code you will write. Keep your first working version before optimizing so you retain a comparison.
+Lab 01 is complete reference code to run and modify. Labs 02–12 are starter code: the harness, CPU reference, validation, and tests are supplied, and you implement the code marked `TODO`. Labs 11–12 integrate your earlier code into the `inspect` application and the release measurements. [Reference solutions](../solutions/README.md) build with `make SOLUTION=1`. Keep your first working version before optimizing so you retain a comparison.
+
+Each starter lab follows the same commands, shown here for Lab 02:
+
+```bash
+make SOLUTION=1 test-lab02    # once: confirm the toolchain and harness work on Sol
+make test-lab02               # your kernel; fails until the TODOs are done
+make sanitize-lab02           # memory (and, for Labs 03 and 06, race and barrier) checks
+make bench-lab02              # the lab's experiment, written to runs/<time>/
+```
 
 ## The weekly routine
 

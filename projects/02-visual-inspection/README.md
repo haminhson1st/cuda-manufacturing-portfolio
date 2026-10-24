@@ -1,6 +1,6 @@
 # Project 2 — Visual defect screening
 
-**Status:** planned; implementation exercises are Labs 05–07.
+**Status:** planned; implementation exercises are Labs 05–07 (starter code and data tools for Labs 05–07 supplied, kernels not yet implemented by the owner).
 
 ## Problem
 

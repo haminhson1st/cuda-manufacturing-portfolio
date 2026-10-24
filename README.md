@@ -2,7 +2,7 @@
 
 An applied CUDA C++ learning portfolio: sensor analytics, visual inspection, and measured GPU acceleration on ASU Sol.
 
-**Status:** course scaffold and first-lab reference code. The manufacturing projects are planned. No GPU performance or inspection-accuracy results have been measured for this repository yet. See [validation status](docs/validation.md).
+**Status:** course scaffold, Lab 01 reference code, and starter code with reference solutions for Labs 02–12. The manufacturing projects are planned. Nothing in Labs 02–12 has been compiled or run on a GPU yet, and no GPU performance or inspection-accuracy results have been measured. See [validation status](docs/validation.md).
 
 The engineering question is: **when does a GPU improve a manufacturing workflow enough to justify using it?** Each project will compare correctness, application performance, and the quality of the resulting decisions.
 
@@ -27,35 +27,35 @@ The engineering question is: **when does a GPU improve a manufacturing workflow 
 
 - Twelve tutorials with a business task, implementation sequence, correctness checks, experiment, and portfolio deliverable.
 - An original, small C++/CUDA calibration reference in [src/lab01](src/lab01), including explicit transfers and timing boundaries.
-- Optional CUDA builds, CPU/GPU correctness cases, and [Slurm scripts](slurm).
+- Labs 02–12 as **starter code**: a complete harness (inputs, CPU reference, validation, timing, CSV output) around files with TODOs for you to implement. Lab 09 adds Nsight Systems/Compute capture targets; Lab 10 provides a serial baseline for your stream pipeline; Lab 11 is the `inspect` capstone application with [frozen configurations](configs/README.md); Lab 12 measures the release against a multicore CPU baseline and generates the results report. Matching [reference solutions](solutions/README.md) build with `make SOLUTION=1`.
+- Data tools for the case studies: synthetic recordings and images for rehearsal, converters for CWRU and MVTec AD files, and evaluators that keep threshold selection separate from held-out evaluation.
+- A GNU [Makefile](Makefile) with per-lab build, test, sanitizer, and benchmark targets, plus [Slurm scripts](slurm).
 - Dataset and experiment templates, project briefs, and a guide to presenting evidence on GitHub.
-- A GitHub Actions workflow that checks documentation and CPU code. It does **not** validate CUDA execution.
+- A GitHub Actions workflow that checks documentation, tests the CPU reference, and compiles every CUDA target without a GPU. It does **not** validate CUDA execution.
 
-Later tutorial implementations are exercises. They are not presented as completed software.
+The projects' case studies, measurements, and release are your work to produce. Nothing here is presented as completed software.
 
 ## First build
 
-On a Linux compute session with a C++17 compiler and CMake 3.20 or newer:
+The build uses GNU make and needs no CMake. On a Linux compute session with a C++17 compiler:
 
 ```bash
-cmake -S . -B build-cpu -DCMAKE_BUILD_TYPE=Release
-cmake --build build-cpu --parallel 4
-ctest --test-dir build-cpu --output-on-failure
-./build-cpu/calibrate_cpu 1000003
+make cpu
+make test-cpu
+./build/calibrate_cpu 1000003
 ```
 
 On an allocated A100 with the CUDA module loaded:
 
 ```bash
-cmake -S . -B build-gpu -DCMAKE_BUILD_TYPE=Release \
-  -DENABLE_CUDA=ON -DCMAKE_CUDA_ARCHITECTURES=80
-cmake --build build-gpu --parallel 4
-ctest --test-dir build-gpu --output-on-failure
-./build-gpu/calibrate_cuda 1000003
-compute-sanitizer --tool memcheck ./build-gpu/calibrate_cuda 1000003
+make -j 4                      # CPU reference plus every CUDA lab
+make test-lab01                # one lab's tests; `make test` runs them all
+make SOLUTION=1 test-lab02     # check the harness against the reference solution
+make sanitize-lab01            # compute-sanitizer memcheck
+make help                      # every target and option
 ```
 
-The architecture value `80` targets A100/A30. Select the appropriate value if the allocated GPU changes. Read the [setup guide](docs/sol-setup.md) before running these commands.
+`CUDA_ARCH=80` (the default) targets A100/A30. Pass another value, for example `make CUDA_ARCH=86`, if the allocated GPU changes; the build directory rebuilds itself when flags change. Read the [setup guide](docs/sol-setup.md) before running these commands.
 
 ## Results
 
@@ -65,7 +65,7 @@ The eventual results table should identify the workload, CPU threads, GPU model,
 
 ## Learning and authorship
 
-This initial scaffold and first-lab reference were prepared with AI assistance. The portfolio owner's work will be demonstrated through implementation commits, tests, profiling interpretation, and experiment reports. Keep [the development log](docs/development-log.md) current and cite upstream examples when adapting them.
+This initial scaffold, the first-lab reference, the Lab 02–12 harnesses, and the reference solutions were prepared with AI assistance. The portfolio owner's work will be demonstrated through implementation commits, tests, profiling interpretation, and experiment reports. Keep [the development log](docs/development-log.md) current and cite upstream examples when adapting them.
 
 Educational manufacturing examples are not validated production inspection or predictive-maintenance systems. Public benchmark data and synthetic inputs are identified in each report.
 
@@ -73,7 +73,10 @@ Educational manufacturing examples are not validated production inspection or pr
 
 ```text
 tutorials/   guided weekly lessons
-src/         implementations; lab01 reference included
+src/         lab01 reference; labs 02-12 harnesses and the files you edit; common/ helpers
+solutions/   reference solutions for the files you edit (built with make SOLUTION=1)
+configs/     frozen detector and screening rules (name = value files)
+scripts/     test runner, documentation checker, Lab 04 data tools
 projects/    business briefs and acceptance criteria
 docs/        setup, publishing, measurement, references
 slurm/       single-GPU execution and validation scripts

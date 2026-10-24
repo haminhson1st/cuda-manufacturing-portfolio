@@ -1,6 +1,6 @@
 # Project 3 — Manufacturing inspection application
 
-**Status:** planned; integration exercises are Labs 08–12.
+**Status:** planned; integration exercises are Labs 08–12 (starter code for Labs 08–12 supplied, not yet implemented by the owner).
 
 ## Problem
 

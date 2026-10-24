@@ -44,7 +44,7 @@ git diff --cached
 git commit -m "docs: add CUDA manufacturing learning portfolio"
 ```
 
-Review the staged files before committing. They should contain the course material and starter code, with no credentials, textbook PDFs, datasets, or fabricated measurements.
+Review the staged files before committing. They should contain the course material and starter code, with no credentials, textbook PDFs, datasets, or fabricated measurements. Decide whether to publish `solutions/`: it holds AI-prepared reference code, so excluding it keeps the public history limited to your own implementations (see [the solutions note](../solutions/README.md)).
 
 ## 4. Connect and push
 

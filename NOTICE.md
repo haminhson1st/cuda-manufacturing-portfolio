@@ -1,6 +1,6 @@
 # Usage and attribution
 
-The tutorials and first-lab reference were authored for this learning portfolio with AI assistance. No textbook PDFs, lecture files, raw industrial datasets, or copied NVIDIA sample implementations are included.
+The tutorials, the first-lab reference, the Lab 02–12 harnesses and data tools, and the code under `solutions/` were authored for this learning portfolio with AI assistance. Your own work is the code you write in the `src/labNN` kernel files and your experiments and reports. No textbook PDFs, lecture files, raw industrial datasets, or copied NVIDIA sample implementations are included.
 
 This scaffold does not choose an open-source license on the owner's behalf. Before inviting reuse, select a license for your original work through GitHub's license chooser and add a LICENSE file. Public visibility alone is not an open-source license.
 
