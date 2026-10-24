@@ -1,0 +1,10 @@
+* text=auto eol=lf
+*.md text eol=lf
+*.py text eol=lf
+*.cpp text eol=lf
+*.hpp text eol=lf
+*.cu text eol=lf
+*.sh text eol=lf
+*.sbatch text eol=lf
+*.yml text eol=lf
+CMakeLists.txt text eol=lf

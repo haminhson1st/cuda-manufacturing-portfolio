@@ -1,0 +1,22 @@
+name: docs-and-cpu
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  docs-and-cpu:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check documentation
+        run: python3 scripts/check_docs.py
+      - name: Configure CPU-only build
+        run: cmake -S . -B build-cpu -DCMAKE_BUILD_TYPE=Release
+      - name: Build CPU reference
+        run: cmake --build build-cpu --parallel 2
+      - name: Test CPU reference
+        run: ctest --test-dir build-cpu --output-on-failure
+      # This job does not compile CUDA or exercise a GPU. Record Sol validation separately.

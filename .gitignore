@@ -1,0 +1,39 @@
+# Build products and local tooling
+/build*/
+/.venv/
+/venv/
+__pycache__/
+*.pyc
+*.o
+*.obj
+*.exe
+*.so
+*.dll
+.DS_Store
+.vscode/
+.idea/
+
+# Credentials and machine configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+/local/
+
+# Large or third-party data and raw run outputs
+/data/raw/
+/data/processed/
+/runs/
+*.nsys-rep
+*.ncu-rep
+*.qdrep
+*.sqlite
+*.out
+*.err
+*.pdf
+*.zip
+*.tar
+*.gz
+
+# Small, reviewed CSVs/plots belong in results/ and are intentionally trackable.

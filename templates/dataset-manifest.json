@@ -1,0 +1,15 @@
+{
+  "status": "template_not_a_dataset",
+  "dataset_name": null,
+  "source_url": null,
+  "license_and_terms": null,
+  "retrieved_date": null,
+  "selection_rule": null,
+  "split_unit": "recording_or_independent_image",
+  "development_items": [],
+  "evaluation_items": [],
+  "files": [],
+  "file_entry_fields": ["relative_path", "sha256", "source_id", "split", "operating_conditions"],
+  "preprocessing": [],
+  "notes": "Record hashes and original identifiers. Replays are not new independent examples."
+}
